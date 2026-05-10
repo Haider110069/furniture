@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  price            Float
+  originalPrice    Float?
+  description      String
+  shortDescription String
+  images           String   // JSON string array
+  category         String
+  rating           Float    @default(0)
+  reviews          Int      @default(0)
+  inStock          Boolean  @default(true)
+  featured         Boolean  @default(false)
+  colors           String   // JSON string array
+  dimensions       String?  // JSON { width, height, depth }
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  reviewItems      Review[]
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  rating      Int      // 1-5 stars
+  title       String
+  content     String
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  status         OrderStatus @default(PENDING)
+  email          String
+  firstName      String
+  lastName       String
+  phone          String?
+  address        String
+  city           String
+  state          String
+  zip            String
+  country        String
+  shippingMethod String
+  subtotal       Float
+  shippingCost   Float
+  tax            Float
+  total          Float
+  paymentLast4   String?
+  paymentMethod  String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  items          OrderItem[]
+}
+
+model OrderItem {
+  id             String  @id @default(cuid())
+  orderId        String
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  productName    String
+  productSlug    String
+  unitPrice      Float
+  quantity       Int
+  selectedColor  String
+  imageUrl       String
+}
