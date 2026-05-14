@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+const nextconfig = {
+  output: 'export', // Ye line zaroori hai
   images: {
-    unoptimized: true,
+    unoptimized: true, // GitHub Pages ke liye zaroori
   },
-}
+};
 
-export default nextConfig
+export default nextconfig;
